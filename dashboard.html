@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call Center Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="topbar">
+        <div class="topbar-left">
+            <div class="brand-icon">📞</div>
+            <h1 class="brand-name">Call Center Dashboard</h1>
+        </div>
+        <div class="topbar-right">
+            <span class="admin-name" id="adminName">Admin</span>
+            <button class="logout-btn" id="logoutBtn" onclick="handleLogout()">Logout →</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+        <!-- Statistics Cards Row -->
+        <div class="stats-row">
+            <div class="stat-card stat-total">
+                <div class="stat-icon">📊</div>
+                <div class="stat-info">
+                    <div class="stat-number" id="statTotal">0</div>
+                    <div class="stat-label">Total Calls</div>
+                </div>
+            </div>
+            <div class="stat-card stat-waiting">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-info">
+                    <div class="stat-number" id="statWaiting">0</div>
+                    <div class="stat-label">Waiting Calls</div>
+                </div>
+            </div>
+            <div class="stat-card stat-processed">
+                <div class="stat-icon">✅</div>
+                <div class="stat-info">
+                    <div class="stat-number" id="statProcessed">0</div>
+                    <div class="stat-label">Processed Calls</div>
+                </div>
+            </div>
+            <div class="stat-card stat-avgtime">
+                <div class="stat-icon">🕐</div>
+                <div class="stat-info">
+                    <div class="stat-number" id="statAvgWait">0s</div>
+                    <div class="stat-label">Avg Wait Time</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Two Column Layout -->
+        <div class="content-grid">
+
+            <!-- Left Column: Add Call + Stack Visualization -->
+            <div class="left-column">
+                <!-- Add Call Panel -->
+                <div class="panel add-call-panel">
+                    <div class="panel-header">
+                        <h2>➕ Add New Call</h2>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label>Caller Name</label>
+                            <input type="text" id="callerName" placeholder="e.g. Rahul Sharma" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="text" id="callerPhone" placeholder="e.g. 9876543210" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label>Issue / Reason</label>
+                            <select id="callerIssue">
+                                <option value="Billing Issue">Billing Issue</option>
+                                <option value="Technical Support">Technical Support</option>
+                                <option value="Account Query">Account Query</option>
+                                <option value="Complaint">Complaint</option>
+                                <option value="General Inquiry">General Inquiry</option>
+                                <option value="Feedback">Feedback</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Priority</label>
+                            <select id="callerPriority">
+                                <option value="Normal">Normal</option>
+                                <option value="High">High</option>
+                                <option value="Urgent">Urgent</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-add" id="addCallBtn" onclick="addCall()">
+                            📞 Add Call to Queue
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Process Call Button -->
+                <div class="panel process-panel">
+                    <button class="btn btn-process" id="processCallBtn" onclick="processCall()">
+                        ⚡ Process Next Call
+                    </button>
+                    <p class="process-hint">Dequeues the first call in line (FIFO order)</p>
+                </div>
+
+                <!-- Stack Visualization -->
+                <div class="panel stack-visual-panel">
+                    <div class="panel-header">
+                        <h2>🔄 Two-Stack Queue Visualization</h2>
+                    </div>
+                    <div class="panel-body">
+                        <div class="stacks-container">
+                            <div class="stack-box">
+                                <h3 class="stack-title">Stack 1 (Inbox)</h3>
+                                <p class="stack-desc">New calls pushed here</p>
+                                <div class="stack-items" id="stack1Visual">
+                                    <div class="empty-stack">Empty</div>
+                                </div>
+                            </div>
+                            <div class="stack-arrow">
+                                <div class="arrow-line"></div>
+                                <div class="arrow-label">Transfer on Dequeue</div>
+                            </div>
+                            <div class="stack-box">
+                                <h3 class="stack-title">Stack 2 (Outbox)</h3>
+                                <p class="stack-desc">Calls processed from here</p>
+                                <div class="stack-items" id="stack2Visual">
+                                    <div class="empty-stack">Empty</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Waiting Queue + Call History -->
+            <div class="right-column">
+                <!-- Waiting Queue -->
+                <div class="panel queue-panel">
+                    <div class="panel-header">
+                        <h2>📋 Waiting Queue <span class="badge" id="queueBadge">0</span></h2>
+                    </div>
+                    <div class="panel-body">
+                        <div class="queue-list" id="queueList">
+                            <div class="empty-state">
+                                <div class="empty-icon">📭</div>
+                                <p>No calls waiting</p>
+                                <p class="empty-sub">Add a new call to get started</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Processed Call History -->
+                <div class="panel history-panel">
+                    <div class="panel-header">
+                        <h2>📜 Processed Call History <span class="badge badge-green" id="historyBadge">0</span></h2>
+                    </div>
+                    <div class="panel-body">
+                        <div class="history-list" id="historyList">
+                            <div class="empty-state">
+                                <div class="empty-icon">📋</div>
+                                <p>No calls processed yet</p>
+                                <p class="empty-sub">Process calls from the queue</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-icon" id="toastIcon">✅</span>
+        <span class="toast-text" id="toastText">Action completed</span>
+    </div>
+
+    <!-- Processing Modal -->
+    <div class="modal-overlay" id="processModal">
+        <div class="modal-card">
+            <div class="modal-icon">⚡</div>
+            <h3 id="modalTitle">Processing Call...</h3>
+            <p id="modalMessage">Transferring from Stack 1 to Stack 2...</p>
+            <div class="modal-progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
