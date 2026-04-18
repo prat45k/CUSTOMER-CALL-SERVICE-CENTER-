@@ -1,0 +1,13 @@
+# This project is built using vanilla Web Technologies and native C++ STL.
+# There are no external libraries, packages, or frameworks required to run it.
+
+# ----------------------------
+# System Requirements
+# ----------------------------
+# Frontend:
+# - Any modern Web Browser (Google Chrome, Mozilla Firefox, Microsoft Edge, Safari)
+#
+# Backend:
+# - A C++ Compiler supporting C++11 or later 
+#   * Windows: MinGW / MSVC
+#   * Linux/Mac: GCC / Clang
